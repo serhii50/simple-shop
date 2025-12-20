@@ -1,0 +1,8 @@
+title: "Мой Простой Магазин"
+description: "Тестовый магазин на Jekyll и CSV"
+baseurl: ""
+url: ""
+theme: minima
+plugins:
+  - jekyll-seo-tag
+  
