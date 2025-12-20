@@ -1,0 +1,18 @@
+---
+layout: default
+title: Главная
+---
+
+<h1>Каталог товаров</h1>
+
+<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+  {% for item in site.data.products %}
+    <div style="border: 1px solid #ddd; padding: 15px; border-radius: 8px; width: 250px;">
+      <img src="{{ item.image }}" alt="{{ item.name }}" style="width: 100%; height: auto;">
+      <h3>{{ item.name }}</h3>
+      <p>{{ item.description }}</p>
+      <p><strong>Цена: {{ item.price }} грн.</strong></p>
+      <button style="background: green; color: white; border: none; padding: 10px; cursor: pointer;">Купить</button>
+    </div>
+  {% endfor %}
+</div>
