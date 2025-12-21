@@ -1,82 +1,43 @@
 ---
 layout: default
-title: Главная
+title: Каталог
 ---
 
-<script>
-  // ЛОГИКА КОРЗИНЫ
-  function addToCart(title, price, image) {
-    let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
-    cart.push({ title: title, price: price, image: image });
-    localStorage.setItem('mySimpleCart', JSON.stringify(cart));
-    
-    if (navigator.vibrate) navigator.vibrate(50);
-    
-    // Обновляем счетчик на кнопке сразу, без перезагрузки
-    updateCartCount();
-    
-    // Вместо alert можно сделать красивее, но пока оставим
-    alert('✅ ' + title + ' добавлен!');
-  }
-
-  function updateCartCount() {
-    let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
-    let badge = document.getElementById('cart-badge');
-    if (badge) {
-      badge.innerText = cart.length;
-      badge.style.display = cart.length > 0 ? 'flex' : 'none';
-    }
-  }
-  
-  // При загрузке страницы проверяем счетчик
-  window.onload = updateCartCount;
-</script>
-
 <style>
-  /* БАЗОВЫЕ СТИЛИ */
-  #nav-trigger { display: none; }
-  .menu-icon { display: none; }
-  
-  body { transition: background-color 0.3s, color 0.3s; }
-
+  /* Специфичные стили только для каталога */
   .product-grid {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 15px;
     justify-content: center;
-    margin-top: 20px;
-    padding-bottom: 80px; /* Отступ снизу, чтобы кнопка корзины не перекрывала контент */
+    margin-top: 10px;
   }
   
   .product-card {
     border: 1px solid #e1e4e8;
-    padding: 15px;
     border-radius: 12px;
-    width: 300px;
+    width: 100%; /* На мобильном во всю ширину */
+    max-width: 320px; /* На десктопе не шире 320px */
     background: #ffffff;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    transition: transform 0.2s;
+    padding: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
   }
-  
-  .product-card:active { transform: scale(0.98); }
 
   .product-img {
     width: 100%;
-    height: 220px;
+    height: 200px;
     object-fit: cover;
     border-radius: 8px;
     margin-bottom: 12px;
   }
 
-  h3 { margin-top: 0; margin-bottom: 5px; }
-  
   .price-tag {
     font-size: 1.2em;
     font-weight: bold;
     color: #2ea44f;
-    margin-bottom: 15px;
+    margin: 10px 0;
   }
 
   .btn-buy {
@@ -87,58 +48,17 @@ title: Главная
     border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
-    font-size: 16px;
-    margin-top: auto;
     width: 100%;
-  }
-
-  /* 🛒 ПЛАВАЮЩАЯ КНОПКА КОРЗИНЫ (FAB) */
-  .fab-cart {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    width: 60px;
-    height: 60px;
-    background-color: #0366d6;
-    border-radius: 50%;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    text-decoration: none;
-    color: white;
-    font-size: 24px;
-    z-index: 1000;
+    font-size: 16px;
   }
   
-  .cart-badge {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: #dc3545;
-    color: white;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    font-size: 14px;
-    display: flex; /* Скрыто по умолчанию скриптом */
-    justify-content: center;
-    align-items: center;
-    font-weight: bold;
-  }
-
-  /* 🌙 НОЧНОЙ РЕЖИМ */
+  /* Темная тема для карточек */
   @media (prefers-color-scheme: dark) {
-    body { background-color: #121212; color: #e0e0e0; }
-    .site-header, .site-footer { background-color: #1e1e1e; border-color: #333; }
-    .site-title, .page-link { color: #ffffff !important; }
-    .product-card { background-color: #1e1e1e; border-color: #333; }
-    h1, h2, h3 { color: #ffffff; }
-    p { color: #b0b0b0; }
+    .product-card { background-color: #161b22; border-color: #30363d; }
+    h3 { color: #c9d1d9; }
+    p { color: #8b949e; }
   }
 </style>
-
-<h1>Каталог товаров</h1>
 
 <div class="product-grid">
   {% for item in site.data.products %}
@@ -155,7 +75,19 @@ title: Главная
   {% endfor %}
 </div>
 
-<a href="/simple-shop/cart" class="fab-cart">
-  🛒
-  <div id="cart-badge" class="cart-badge" style="display:none">0</div>
-</a>
+<script>
+  // Логика добавления (только действие, отрисовка кнопки в layout)
+  function addToCart(title, price, image) {
+    let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
+    cart.push({ title: title, price: price, image: image });
+    localStorage.setItem('mySimpleCart', JSON.stringify(cart));
+    
+    if (navigator.vibrate) navigator.vibrate(50);
+    
+    // Обновляем значок в хедере (функция из default.html)
+    updateBadge(); 
+    
+    // Вместо алерта можно сделать красивое всплывающее уведомление, но пока так
+    // alert('Добавлено!'); // Можно отключить, чтобы не бесило
+  }
+</script>
