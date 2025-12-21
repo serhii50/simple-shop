@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ page.title }}</title>
+
+  <style>
+    /* 1. ГЛОБАЛЬНЫЕ СТИЛИ (БЕЗ МИГАНИЯ) */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f6f8fa;
+      color: #24292e;
+      /* Убираем transition, чтобы не было вспышки при загрузке */
+    }
+
+    /* Шапка сайта */
+    header {
+      background-color: #24292e;
+      color: white;
+      padding: 15px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+    }
+    
+    header a {
+      color: white;
+      text-decoration: none;
+      font-size: 1.2em;
+      font-weight: bold;
+    }
+
+    /* Контейнер для контента */
+    main {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 15px;
+      min-height: 80vh; /* Чтобы футер не прилипал к верху на пустых страницах */
+    }
+
+    /* Подвал */
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.8em;
+      color: #586069;
+      border-top: 1px solid #eaecef;
+      margin-top: 40px;
+    }
+
+    /* 🛒 ПЛАВАЮЩАЯ КНОПКА (Видна на всех страницах) */
+    .fab-cart {
+      position: fixed;
+      bottom: 25px;
+      right: 25px;
+      width: 60px;
+      height: 60px;
+      background-color: #0366d6;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-decoration: none;
+      font-size: 24px;
+      z-index: 2000;
+      transition: transform 0.2s;
+    }
+    .fab-cart:active { transform: scale(0.9); }
+    
+    .cart-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background-color: #dc3545;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      font-size: 12px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      border: 2px solid white;
+    }
+
+    /* 🌙 НОЧНОЙ РЕЖИМ (Правильный) */
+    @media (prefers-color-scheme: dark) {
+      body { background-color: #0d1117; color: #c9d1d9; }
+      header { background-color: #161b22; }
+      footer { color: #8b949e; border-top-color: #30363d; }
+      .cart-badge { border-color: #0d1117; }
+      
+      /* Переопределяем ссылки */
+      a { color: #58a6ff; }
+      header a { color: white; } /* В шапке всегда белое */
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="/simple-shop/">🏪 Мой Простой Магазин</a>
+  </header>
+
+  <main>
+    {{ content }}
+  </main>
+
+  <footer>
+    &copy; 2025 Simple Shop • Работает на Jekyll
+  </footer>
+
+  <a href="/simple-shop/cart" class="fab-cart" id="fab-cart" style="display:none;">
+    🛒
+    <div id="cart-badge" class="cart-badge" style="display:none">0</div>
+  </a>
+
+  <script>
+    // Глобальная логика корзины
+    function updateBadge() {
+      let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
+      let badge = document.getElementById('cart-badge');
+      let fab = document.getElementById('fab-cart');
+      
+      if (cart.length > 0) {
+        fab.style.display = 'flex';
+        badge.style.display = 'flex';
+        badge.innerText = cart.length;
+      } else {
+        // Если корзина пуста, кнопку можно прятать или показывать без цифры
+        fab.style.display = 'flex'; 
+        badge.style.display = 'none';
+      }
+    }
+    // Запускаем проверку при загрузке любой страницы
+    document.addEventListener("DOMContentLoaded", updateBadge);
+  </script>
+
+</body>
+</html>
