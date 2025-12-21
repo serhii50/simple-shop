@@ -3,56 +3,111 @@ layout: default
 title: Главная
 ---
 
-<style>
-  /* Прячем глючную галочку мобильного меню */
-  #nav-trigger { display: none; }
-  .menu-icon { display: none; }
+<script>
+  // ЛОГИКА КОРЗИНЫ (Работает вечно)
+  function addToCart(title, price, image) {
+    let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
+    cart.push({ title: title, price: price, image: image });
+    localStorage.setItem('mySimpleCart', JSON.stringify(cart));
+    
+    // Простая вибрация телефона при добавлении (приятный отклик)
+    if (navigator.vibrate) navigator.vibrate(50);
+    
+    alert('✅ ' + title + ' добавлен в корзину!\nВсего товаров: ' + cart.length);
+  }
+</script>
 
-  /* Делаем сетку товаров красивой */
+<style>
+  /* БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) */
+  #nav-trigger { display: none; } /* Прячем глючную галочку */
+  .menu-icon { display: none; }
+  
+  body {
+    transition: background-color 0.3s, color 0.3s; /* Плавный переход смены темы */
+  }
+
   .product-grid {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
+    margin-top: 20px;
   }
   
-  /* Карточка товара */
   .product-card {
     border: 1px solid #e1e4e8;
     padding: 15px;
-    border-radius: 8px;
+    border-radius: 12px; /* Чуть скруглим углы */
     width: 300px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    background: white;
+    background: #ffffff;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s;
   }
 
-  /* Картинка товара */
+  .product-card:active {
+    transform: scale(0.98); /* Эффект нажатия на карточку */
+  }
+
   .product-img {
     width: 100%;
     height: 220px;
-    object-fit: cover; /* Чтобы фото не растягивало, а аккуратно обрезало */
-    border-radius: 4px;
-    margin-bottom: 10px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 12px;
   }
 
-  /* Кнопка */
+  h3 { margin-top: 0; margin-bottom: 5px; }
+  
+  .price-tag {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #2ea44f;
+    margin-bottom: 15px;
+  }
+
   .btn-buy {
     background-color: #2ea44f;
     color: white;
     border: none;
-    padding: 10px;
-    border-radius: 6px;
+    padding: 12px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: bold;
-    margin-top: auto; /* Прибивает кнопку к низу карточки */
+    font-size: 16px;
+    margin-top: auto;
+    width: 100%;
   }
   .btn-buy:hover { background-color: #2c974b; }
+
+  /* 🌙 НОЧНОЙ РЕЖИМ (DARK MODE) */
+  @media (prefers-color-scheme: dark) {
+    body {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    
+    /* Красим саму тему Minima (заголовки и фон) */
+    .site-header, .site-footer {
+      background-color: #1e1e1e;
+      border-color: #333;
+    }
+    .site-title, .page-link {
+      color: #ffffff !important;
+    }
+
+    /* Красим наши карточки */
+    .product-card {
+      background-color: #1e1e1e;
+      border-color: #333;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    }
+
+    h1, h2, h3 { color: #ffffff; }
+    p { color: #b0b0b0; }
+  }
 </style>
-
-
-<h1>Каталог товаров</h1>
 
 <h1>Каталог товаров</h1>
 
@@ -62,9 +117,11 @@ title: Главная
       <img src="{{ item.image }}" alt="{{ item.name }}" class="product-img">
       <h3>{{ item.name }}</h3>
       <p>{{ item.description }}</p>
-      <p><strong>Цена: {{ item.price }} грн.</strong></p>
-      <button class="btn-buy" onclick="alert('Товар добавлен в корзину!')">Купить</button>
+      <div class="price-tag">{{ item.price }} грн.</div>
+      
+      <button class="btn-buy" onclick="addToCart('{{ item.name }}', '{{ item.price }}', '{{ item.image }}')">
+        В корзину
+      </button>
     </div>
   {% endfor %}
 </div>
-
