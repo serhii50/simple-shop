@@ -4,119 +4,87 @@ title: Корзина
 ---
 
 <style>
-  /* Стили такие же, как на главной, для единства */
-  body { transition: background-color 0.3s, color 0.3s; }
-  
-  .cart-container {
-    max-width: 600px;
-    margin: 20px auto;
-    padding: 20px;
-  }
-
   .cart-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #eaecef;
     padding: 15px 0;
   }
-
   .cart-item img {
     width: 60px;
     height: 60px;
+    border-radius: 6px;
     object-fit: cover;
-    border-radius: 4px;
     margin-right: 15px;
   }
-
   .item-info { flex-grow: 1; }
-  .item-title { font-weight: bold; display: block; }
-  .item-price { color: #2ea44f; }
-
+  .item-title { font-weight: 600; display: block; }
+  
   .btn-remove {
-    background: #dc3545;
-    color: white;
-    border: none;
+    color: #cb2431;
+    background: none;
+    border: 1px solid #eaecef;
     padding: 5px 10px;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
-    margin-left: 10px;
   }
 
-  .total-section {
-    font-size: 1.5em;
-    font-weight: bold;
-    text-align: right;
+  .total-block {
     margin-top: 20px;
-    padding-top: 20px;
-    border-top: 2px solid #2ea44f;
-  }
-
-  .checkout-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 20px;
-  }
-
-  .btn-checkout {
-    flex: 1;
-    padding: 15px;
-    color: white;
+    padding: 20px;
+    background: #f1f8ff;
+    border-radius: 8px;
     text-align: center;
+  }
+  
+  .btn-checkout {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    margin-top: 10px;
+    color: white;
     text-decoration: none;
     border-radius: 8px;
     font-weight: bold;
-    border: none;
-    cursor: pointer;
+    text-align: center;
   }
-
-  .btn-back {
-    display: block;
-    margin-bottom: 20px;
-    color: #0366d6;
-    text-decoration: none;
-  }
-
-  /* 🌙 Темная тема */
+  
   @media (prefers-color-scheme: dark) {
-    body { background-color: #121212; color: #e0e0e0; }
-    .cart-item { border-bottom-color: #333; }
-    .total-section { border-top-color: #2ea44f; }
-    .btn-back { color: #58a6ff; }
+    .cart-item { border-bottom-color: #30363d; }
+    .btn-remove { border-color: #30363d; color: #ff7b72; }
+    .total-block { background-color: #161b22; }
   }
 </style>
 
-<div class="cart-container">
-  <a href="/simple-shop/" class="btn-back">← Вернуться в магазин</a>
-  <h1>Ваша корзина</h1>
+<h1>Ваши покупки</h1>
 
-  <div id="cart-items">
-    <p>Корзина пуста...</p>
-  </div>
+<div id="cart-items">
+  <p style="text-align:center; color: gray;">Корзина пуста...</p>
+</div>
 
-  <div id="cart-summary" style="display:none;">
-    <div class="total-section">
+<div id="cart-summary" style="display:none;">
+  <div class="total-block">
+    <div style="font-size: 1.5em; margin-bottom: 15px;">
       Итого: <span id="total-price">0</span> грн.
     </div>
-
-    <div class="checkout-buttons">
-      <button onclick="checkout('wa')" class="btn-checkout" style="background-color: #25D366;">
-        Заказать в WhatsApp
-      </button>
-      <button onclick="checkout('tg')" class="btn-checkout" style="background-color: #0088cc;">
-        Заказать в Telegram
-      </button>
-    </div>
+    
+    <button onclick="checkout('wa')" class="btn-checkout" style="background-color: #25D366; border:none;">
+      Заказать в WhatsApp
+    </button>
+    <button onclick="checkout('tg')" class="btn-checkout" style="background-color: #0088cc; border:none;">
+      Заказать в Telegram
+    </button>
     
     <br>
-    <button onclick="clearCart()" style="width:100%; padding:10px; background:#666; color:white; border:none; border-radius:8px;">
+    <button onclick="clearCart()" style="background:none; border:none; color:gray; text-decoration:underline; cursor:pointer;">
       Очистить корзину
     </button>
   </div>
 </div>
 
 <script>
-  // 1. Загружаем корзину при старте
+  // Функции только для страницы корзины
   function loadCart() {
     let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
     let container = document.getElementById('cart-items');
@@ -127,7 +95,7 @@ title: Корзина
     let total = 0;
 
     if (cart.length === 0) {
-      container.innerHTML = '<p>Корзина пуста. Добавьте что-нибудь!</p>';
+      container.innerHTML = '<p style="text-align:center; padding: 40px;">В корзине пусто 🕸️</p>';
       summary.style.display = 'none';
       return;
     }
@@ -136,15 +104,14 @@ title: Корзина
 
     cart.forEach((item, index) => {
       total += parseInt(item.price);
-      
       let div = document.createElement('div');
       div.className = 'cart-item';
       div.innerHTML = `
         <div style="display:flex; align-items:center;">
-          <img src="${item.image}" alt="${item.title}">
+          <img src="${item.image}">
           <div class="item-info">
             <span class="item-title">${item.title}</span>
-            <span class="item-price">${item.price} грн.</span>
+            <span style="color:#2ea44f">${item.price} грн.</span>
           </div>
         </div>
         <button class="btn-remove" onclick="removeItem(${index})">✕</button>
@@ -153,53 +120,43 @@ title: Корзина
     });
 
     totalSpan.innerText = total;
+    // Обновляем и значок на кнопке
+    if(window.updateBadge) window.updateBadge();
   }
 
-  // 2. Удаление одного товара
   function removeItem(index) {
     let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
-    cart.splice(index, 1); // Удаляем элемент по индексу
+    cart.splice(index, 1);
     localStorage.setItem('mySimpleCart', JSON.stringify(cart));
-    loadCart(); // Перерисовываем
+    loadCart();
   }
 
-  // 3. Очистка всей корзины
   function clearCart() {
-    if(confirm('Точно очистить?')) {
+    if(confirm('Очистить корзину?')) {
       localStorage.removeItem('mySimpleCart');
       loadCart();
     }
   }
 
-  // 4. Оформление заказа (Генерация сообщения)
   function checkout(messenger) {
     let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
-    if (cart.length === 0) return;
-
     let total = 0;
-    let message = "Здравствуйте! Хочу сделать заказ:\n\n";
-
+    let message = "Здравствуйте! Заказ:\n";
     cart.forEach(item => {
-      message += `- ${item.title} (${item.price} грн)\n`;
+      message += `- ${item.title} (${item.price})\n`;
       total += parseInt(item.price);
     });
+    message += `\nСумма: ${total} грн.`;
 
-    message += `\n💰 Итого: ${total} грн.`;
-
-    // Кодируем сообщение для URL
-    let encodedMsg = encodeURIComponent(message);
+    let phone = "380501234567"; // Твой номер
+    let tgUser = "Serhii_K";    // Твой ник
     
-    // Вставь сюда свой номер/логин
-    let phone = "380501234567"; 
-    let tgUser = "Serhii_K"; 
-
-    if (messenger === 'wa') {
-      window.location.href = `https://wa.me/${phone}?text=${encodedMsg}`;
-    } else {
-      window.location.href = `https://t.me/${tgUser}?text=${encodedMsg}`;
-    }
+    let url = messenger === 'wa' 
+      ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+      : `https://t.me/${tgUser}?text=${encodeURIComponent(message)}`;
+      
+    window.location.href = url;
   }
 
-  // Запускаем при открытии страницы
   loadCart();
 </script>
