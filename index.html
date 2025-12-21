@@ -4,27 +4,40 @@ title: Главная
 ---
 
 <script>
-  // ЛОГИКА КОРЗИНЫ (Работает вечно)
+  // ЛОГИКА КОРЗИНЫ
   function addToCart(title, price, image) {
     let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
     cart.push({ title: title, price: price, image: image });
     localStorage.setItem('mySimpleCart', JSON.stringify(cart));
     
-    // Простая вибрация телефона при добавлении (приятный отклик)
     if (navigator.vibrate) navigator.vibrate(50);
     
-    alert('✅ ' + title + ' добавлен в корзину!\nВсего товаров: ' + cart.length);
+    // Обновляем счетчик на кнопке сразу, без перезагрузки
+    updateCartCount();
+    
+    // Вместо alert можно сделать красивее, но пока оставим
+    alert('✅ ' + title + ' добавлен!');
   }
+
+  function updateCartCount() {
+    let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
+    let badge = document.getElementById('cart-badge');
+    if (badge) {
+      badge.innerText = cart.length;
+      badge.style.display = cart.length > 0 ? 'flex' : 'none';
+    }
+  }
+  
+  // При загрузке страницы проверяем счетчик
+  window.onload = updateCartCount;
 </script>
 
 <style>
-  /* БАЗОВЫЕ СТИЛИ (СВЕТЛАЯ ТЕМА) */
-  #nav-trigger { display: none; } /* Прячем глючную галочку */
+  /* БАЗОВЫЕ СТИЛИ */
+  #nav-trigger { display: none; }
   .menu-icon { display: none; }
   
-  body {
-    transition: background-color 0.3s, color 0.3s; /* Плавный переход смены темы */
-  }
+  body { transition: background-color 0.3s, color 0.3s; }
 
   .product-grid {
     display: flex;
@@ -32,12 +45,13 @@ title: Главная
     gap: 20px;
     justify-content: center;
     margin-top: 20px;
+    padding-bottom: 80px; /* Отступ снизу, чтобы кнопка корзины не перекрывала контент */
   }
   
   .product-card {
     border: 1px solid #e1e4e8;
     padding: 15px;
-    border-radius: 12px; /* Чуть скруглим углы */
+    border-radius: 12px;
     width: 300px;
     background: #ffffff;
     display: flex;
@@ -45,10 +59,8 @@ title: Главная
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
     transition: transform 0.2s;
   }
-
-  .product-card:active {
-    transform: scale(0.98); /* Эффект нажатия на карточку */
-  }
+  
+  .product-card:active { transform: scale(0.98); }
 
   .product-img {
     width: 100%;
@@ -79,31 +91,48 @@ title: Главная
     margin-top: auto;
     width: 100%;
   }
-  .btn-buy:hover { background-color: #2c974b; }
 
-  /* 🌙 НОЧНОЙ РЕЖИМ (DARK MODE) */
+  /* 🛒 ПЛАВАЮЩАЯ КНОПКА КОРЗИНЫ (FAB) */
+  .fab-cart {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 60px;
+    height: 60px;
+    background-color: #0366d6;
+    border-radius: 50%;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    color: white;
+    font-size: 24px;
+    z-index: 1000;
+  }
+  
+  .cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+    display: flex; /* Скрыто по умолчанию скриптом */
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+  }
+
+  /* 🌙 НОЧНОЙ РЕЖИМ */
   @media (prefers-color-scheme: dark) {
-    body {
-      background-color: #121212;
-      color: #e0e0e0;
-    }
-    
-    /* Красим саму тему Minima (заголовки и фон) */
-    .site-header, .site-footer {
-      background-color: #1e1e1e;
-      border-color: #333;
-    }
-    .site-title, .page-link {
-      color: #ffffff !important;
-    }
-
-    /* Красим наши карточки */
-    .product-card {
-      background-color: #1e1e1e;
-      border-color: #333;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
-    }
-
+    body { background-color: #121212; color: #e0e0e0; }
+    .site-header, .site-footer { background-color: #1e1e1e; border-color: #333; }
+    .site-title, .page-link { color: #ffffff !important; }
+    .product-card { background-color: #1e1e1e; border-color: #333; }
     h1, h2, h3 { color: #ffffff; }
     p { color: #b0b0b0; }
   }
@@ -125,3 +154,8 @@ title: Главная
     </div>
   {% endfor %}
 </div>
+
+<a href="/simple-shop/cart" class="fab-cart">
+  🛒
+  <div id="cart-badge" class="cart-badge" style="display:none">0</div>
+</a>
