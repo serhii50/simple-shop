@@ -1,11 +1,9 @@
 source "https://rubygems.org"
 
-# Основной движок
 gem "jekyll"
 
-# Наш плагин для CSV
-gem "jekyll-datapage_gen"
+# Указываем роботу качать плагин прямо с Гитхаба автора
+gem "jekyll-datapage_gen", git: "https://github.com/avillafiorita/jekyll-datapage_gen"
 
-# Дополнительные штуки, которые иногда нужны для совместимости
 gem "webrick"
 gem "kramdown-parser-gfm"
