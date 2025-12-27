@@ -6,12 +6,9 @@
     <title>Генератор товаров (Admin)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-gray-50 text-gray-900">
@@ -21,13 +18,12 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // Иконки (компоненты-заглушки, используем lucide.createIcons после рендера)
         const Icon = ({ name, className }) => <i data-lucide={name} className={className}></i>;
 
         const CATEGORIES = ["Смартфон", "Ноутбук", "Чехол", "Наушники", "Часы"];
         const ADJECTIVES = ["Мощный", "Стильный", "Красный", "Быстрый", "Бюджетный", "Флагманский"];
 
-        const generateProducts = (count = 50) => {
+        const generateProducts = (count) => {
             const products = [];
             for (let i = 1; i <= count; i++) {
                 const cat = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
@@ -109,33 +105,30 @@
 
         function App() {
             const [products, setProducts] = useState([]);
-            const [isGenerating, setIsGenerating] = useState(true);
+            const [isGenerating, setIsGenerating] = useState(false);
+            // Добавили состояние для количества товаров
+            const [count, setCount] = useState(50);
 
-            // Инициализация при запуске
-            useEffect(() => {
-                regenerate();
-            }, []);
-
-            // Обновляем иконки Lucide после каждого рендера
+            // useEffect теперь только обновляет иконки, автозапуска нет
             useEffect(() => {
                 if (window.lucide) window.lucide.createIcons();
             });
 
             const regenerate = () => {
                 setIsGenerating(true);
+                setProducts([]); // Очищаем старые перед генерацией
                 setTimeout(() => {
-                    setProducts(generateProducts(50));
+                    const cleanCount = Math.max(1, parseInt(count) || 1); // Защита от дурака
+                    setProducts(generateProducts(cleanCount));
                     setIsGenerating(false);
-                }, 500);
+                }, 500); // Небольшая задержка для анимации
             };
 
             const generateCSVContent = () => {
-                // Писатель CSV с правильными кавычками
                 const header = "id,name,price,images,description\n";
                 const rows = products.map(p => {
                     const escape = (val) => {
                         const str = String(val);
-                        // Если есть запятая, кавычка или перенос строки - оборачиваем в кавычки
                         if (str.includes(',') || str.includes('"') || str.includes('\n')) {
                             return `"${str.replace(/"/g, '""')}"`;
                         }
@@ -153,7 +146,7 @@
             };
 
             const downloadCSV = () => {
-                const BOM = "\uFEFF"; // Чтобы Excel понимал русский язык
+                const BOM = "\uFEFF";
                 const csvContent = BOM + generateCSVContent();
                 const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
                 const url = URL.createObjectURL(blob);
@@ -166,39 +159,58 @@
             };
 
             return (
-                <div className="min-h-screen pb-20">
+                <div className="min-h-screen pb-20 bg-gray-50">
                     <header className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
-                        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                            <div className="flex items-center gap-2">
+                        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+                            
+                            {/* Лого */}
+                            <div className="flex items-center gap-2 flex-shrink-0">
                                 <div className="bg-blue-600 p-1.5 rounded-lg text-white">
-                                    <Icon name="layout-grid" className="w-5 h-5" />
+                                    <Icon name="settings" className="w-5 h-5" />
                                 </div>
-                                <h1 className="text-lg font-bold text-gray-800 hidden sm:block">
-                                    Генератор товаров
+                                <h1 className="text-lg font-bold text-gray-800 hidden md:block">
+                                    Admin
                                 </h1>
                             </div>
                             
-                            <div className="flex items-center gap-2">
+                            {/* Панель управления */}
+                            <div className="flex items-center gap-2 flex-grow justify-end sm:justify-start">
+                                
+                                {/* Поле ввода количества */}
+                                <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                                    <span className="text-xs text-gray-500 pl-2 hidden sm:inline">Кол-во:</span>
+                                    <input 
+                                        type="number" 
+                                        value={count}
+                                        onChange={(e) => setCount(e.target.value)}
+                                        className="w-16 bg-white rounded px-2 py-1 text-sm border-none focus:ring-2 focus:ring-blue-500 outline-none font-bold text-center"
+                                        min="1"
+                                        max="1000"
+                                    />
+                                </div>
+
+                                {/* Кнопка ГЕНЕРАЦИИ */}
                                 <button 
                                     onClick={regenerate}
-                                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2"
-                                    title="Сгенерировать новые"
+                                    disabled={isGenerating}
+                                    className="flex items-center gap-2 bg-gray-800 hover:bg-gray-900 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
                                 >
-                                    <Icon name="refresh-cw" className={`w-5 h-5 ${isGenerating ? 'animate-spin' : ''}`} />
-                                    <span className="text-sm font-medium hidden sm:inline">Обновить</span>
-                                </button>
-
-                                <div className="h-6 w-px bg-gray-200 mx-1"></div>
-
-                                {/* КНОПКА СКАЧАТЬ (Теперь работает!) */}
-                                <button 
-                                    onClick={downloadCSV}
-                                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-bold shadow-sm active:scale-95 transition-all"
-                                >
-                                    <Icon name="download" className="w-4 h-4" />
-                                    <span>Скачать products.csv</span>
+                                    <Icon name="play" className={`w-4 h-4 ${isGenerating ? 'hidden' : ''}`} />
+                                    <Icon name="loader-2" className={`w-4 h-4 animate-spin ${!isGenerating ? 'hidden' : ''}`} />
+                                    <span className="hidden sm:inline">{isGenerating ? '...' : 'Создать'}</span>
                                 </button>
                             </div>
+
+                            {/* Кнопка СКАЧАТЬ (появляется только если есть товары) */}
+                            {products.length > 0 && (
+                                <button 
+                                    onClick={downloadCSV}
+                                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm active:scale-95 transition-all flex-shrink-0"
+                                >
+                                    <Icon name="download" className="w-4 h-4" />
+                                    <span className="hidden sm:inline">Скачать CSV</span>
+                                </button>
+                            )}
                         </div>
                     </header>
 
@@ -206,7 +218,12 @@
                         {isGenerating ? (
                             <div className="flex flex-col items-center justify-center py-20 opacity-50">
                                 <div className="w-10 h-10 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin mb-4"></div>
-                                <p className="text-gray-500 font-medium">Создаем товары...</p>
+                                <p className="text-gray-500 font-medium">Работаем...</p>
+                            </div>
+                        ) : products.length === 0 ? (
+                            <div className="text-center py-20 text-gray-400">
+                                <Icon name="package-open" className="w-16 h-16 mx-auto mb-4 opacity-20" />
+                                <p>Список пуст. Укажите количество и нажмите "Создать".</p>
                             </div>
                         ) : (
                             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
