@@ -5,10 +5,6 @@ url: ""
 theme: minima
 plugins:
   - jekyll-seo-tag
-  
-# --- Настройки плагинов ---
-plugins:
-  - jekyll-datapage_gen
 
 # Настройка генерации
 page_gen:
