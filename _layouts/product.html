@@ -1,0 +1,73 @@
+---
+layout: default
+---
+
+<style>
+  .product-detail {
+    background: white;
+    padding: 20px;
+    border-radius: 12px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+  
+  .gallery-section { flex: 1; min-width: 300px; }
+  .info-section { flex: 1; min-width: 300px; }
+  
+  .main-photo {
+    width: 100%;
+    height: 350px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .thumb-grid { display: flex; gap: 10px; }
+  .thumb {
+    width: 60px; height: 60px; 
+    object-fit: cover; border-radius: 4px; 
+    cursor: pointer; opacity: 0.7;
+    transition: 0.2s;
+  }
+  .thumb:hover { opacity: 1; transform: scale(1.05); }
+
+  .price-big {
+    font-size: 2em; color: #2ea44f; font-weight: bold; margin: 15px 0;
+  }
+  
+  .btn-buy-big {
+    width: 100%; padding: 15px; 
+    background: #2ea44f; color: white; border: none; 
+    border-radius: 8px; font-size: 1.2em; font-weight: bold; cursor: pointer;
+  }
+</style>
+
+<div class="product-detail">
+
+  <div class="gallery-section">
+    {% assign images = page.images | split: ';' %}
+    
+    <img src="{{ images[0] }}" class="main-photo" id="mainImg">
+    
+    <div class="thumb-grid">
+      {% for img in images %}
+        <img src="{{ img }}" class="thumb" onclick="document.getElementById('mainImg').src = this.src">
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="info-section">
+    <h1>{{ page.name }}</h1>
+    <div class="price-big">{{ page.price }} грн.</div>
+    <p>{{ page.description }}</p>
+    
+    <button class="btn-buy-big" onclick="addToCart('{{ page.name }}', '{{ page.price }}', '{{ images[0] }}')">
+      В корзину
+    </button>
+    
+    <br><br>
+    <a href="/simple-shop/">← Назад в каталог</a>
+  </div>
+
+</div>
