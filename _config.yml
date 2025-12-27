@@ -6,3 +6,14 @@ theme: minima
 plugins:
   - jekyll-seo-tag
   
+# --- Настройки плагинов ---
+plugins:
+  - jekyll-datapage_gen
+
+# Настройка генерации
+page_gen:
+  - data: 'products'       # Имя файла в папке _data (products.csv)
+    template: 'product'    # Имя шаблона в папке _layouts (product.html)
+    name: 'id'             # Колонка в CSV, которая станет именем файла (1.html, 2.html)
+    dir: 'product'         # Папка, куда сложить готовые страницы
+    extension: 'html'
