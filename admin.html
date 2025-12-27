@@ -6,7 +6,6 @@
     <title>Генератор товаров (Admin)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -18,8 +17,7 @@
     <script type="text/babel">
         const { useState, useEffect } = React;
 
-        // --- ВСТРОЕННЫЕ ИКОНКИ (SVG) ---
-        // Мы убрали внешнюю библиотеку, чтобы она не ломала React
+        // Встроенные иконки (чтобы ничего не ломалось)
         const Icons = {
             settings: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.1a2 2 0 0 1-1-1.72v-.51a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg>,
             play: <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>,
@@ -31,11 +29,9 @@
         const Icon = ({ name, className }) => {
             const icon = Icons[name];
             if (!icon) return null;
-            // Клонируем элемент, чтобы добавить ему переданные классы
             return React.cloneElement(icon, { className });
         };
 
-        // --- ДАННЫЕ И ЛОГИКА ---
         const CATEGORIES = ["Смартфон", "Ноутбук", "Чехол", "Наушники", "Часы"];
         const ADJECTIVES = ["Мощный", "Стильный", "Красный", "Быстрый", "Бюджетный", "Флагманский"];
 
@@ -43,6 +39,216 @@
             const products = [];
             for (let i = 1; i <= count; i++) {
                 const cat = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
+                const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
+                const name = `${cat} ${adj} Pixel-${i}`;
+                const price = Math.floor(Math.random() * (50000 - 100 + 1)) + 100;
+                
+                const numImages = Math.floor(Math.random() * (5 - 2 + 1)) + 2;
+                const images = [];
+                for (let j = 0; j < numImages; j++) {
+                    images.push(`https://picsum.photos/seed/product-${i}-img-${j}/600/600`);
+                }
+
+                products.push({
+                    id: i,
+                    name,
+                    price,
+                    images,
+                    category: cat,
+                    description: `Описание товара ${name}. Это отличный выбор, если вы ищете ${cat.toLowerCase()}. В комплекте ${numImages} фото.`,
+                    rating: (Math.random() * (5 - 3.5) + 3.5).toFixed(1)
+                });
+            }
+            return products;
+        };
+
+        const ProductCard = ({ product }) => {
+            const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+            return (
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col h-full overflow-hidden">
+                    <div className="relative aspect-square bg-gray-100">
+                        <img 
+                            src={product.images[activeImageIndex]} 
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                        />
+                        {product.images.length > 1 && (
+                            <div className="absolute bottom-2 left-0 right-0 flex justify-center gap-1.5">
+                                {product.images.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            setActiveImageIndex(idx);
+                                        }}
+                                        className={`w-1.5 h-1.5 rounded-full shadow-sm transition-all ${
+                                            idx === activeImageIndex ? 'bg-white w-3' : 'bg-white/60'
+                                        }`}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="p-3 flex flex-col flex-grow">
+                        <div className="flex justify-between items-start mb-1">
+                            <span className="text-[10px] uppercase font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
+                                {product.category}
+                            </span>
+                            <div className="flex items-center text-amber-400 text-xs font-bold gap-0.5">
+                                <span>★</span> {product.rating}
+                            </div>
+                        </div>
+                        
+                        <h3 className="font-bold text-gray-800 text-sm mb-1 leading-snug line-clamp-2">
+                            {product.name}
+                        </h3>
+                        
+                        <div className="flex items-end justify-between mt-auto pt-3">
+                            <span className="text-lg font-bold text-gray-900">
+                                {product.price.toLocaleString('ru-RU')} ₽
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        function App() {
+            const [products, setProducts] = useState([]);
+            const [isGenerating, setIsGenerating] = useState(false);
+            const [count, setCount] = useState(50);
+
+            const regenerate = () => {
+                setIsGenerating(true);
+                setProducts([]); 
+                setTimeout(() => {
+                    const cleanCount = Math.max(1, parseInt(count) || 1);
+                    setProducts(generateProducts(cleanCount));
+                    setIsGenerating(false);
+                }, 100); 
+            };
+
+            const generateCSVContent = () => {
+                const header = "id,name,price,images,description\n";
+                const rows = products.map(p => {
+                    const escape = (val) => {
+                        const str = String(val);
+                        if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                            return `"${str.replace(/"/g, '""')}"`;
+                        }
+                        return str;
+                    };
+                    return [
+                        p.id,
+                        escape(p.name),
+                        p.price,
+                        escape(p.images.join(';')),
+                        escape(p.description)
+                    ].join(",");
+                }).join("\n");
+                return header + rows;
+            };
+
+            const downloadCSV = () => {
+                // МЫ УБРАЛИ BOM (тот самый \uFEFF), ЧТОБЫ JEKYLL НЕ ГЛЮЧИЛ
+                const csvContent = generateCSVContent();
+                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+                const url = URL.createObjectURL(blob);
+                const link = document.createElement("a");
+                link.setAttribute("href", url);
+                link.setAttribute("download", "products.csv");
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            return (
+                <div className="min-h-screen pb-20 bg-gray-50">
+                    <header className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
+                        <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
+                            
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                                <div className="bg-blue-600 p-1.5 rounded-lg text-white">
+                                    <Icon name="settings" className="w-5 h-5" />
+                                </div>
+                                <h1 className="text-lg font-bold text-gray-800 hidden md:block">
+                                    Admin
+                                </h1>
+                            </div>
+                            
+                            <div className="flex items-center gap-2 flex-grow justify-end sm:justify-start">
+                                <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
+                                    <span className="text-xs text-gray-500 pl-2 hidden sm:inline">Кол-во:</span>
+                                    <input 
+                                        type="number" 
+                                        value={count}
+                                        onChange={(e) => setCount(e.target.value)}
+                                        className="w-16 bg-white rounded px-2 py-1 text-sm border-none focus:ring-2 focus:ring-blue-500 outline-none font-bold text-center"
+                                        min="1"
+                                        max="1000"
+                                    />
+                                </div>
+
+                                <button 
+                                    onClick={regenerate}
+                                    disabled={isGenerating}
+                                    className="flex items-center gap-2 bg-gray-800 hover:bg-gray-900 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                                >
+                                    {isGenerating ? (
+                                        <Icon name="loader" className="w-4 h-4 animate-spin" />
+                                    ) : (
+                                        <Icon name="play" className="w-4 h-4" />
+                                    )}
+                                    <span className="hidden sm:inline">{isGenerating ? '...' : 'Создать'}</span>
+                                </button>
+                            </div>
+
+                            {products.length > 0 && (
+                                <button 
+                                    onClick={downloadCSV}
+                                    className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-1.5 rounded-lg text-sm font-bold shadow-sm active:scale-95 transition-all flex-shrink-0"
+                                >
+                                    <Icon name="download" className="w-4 h-4" />
+                                    <span className="hidden sm:inline">Скачать CSV</span>
+                                </button>
+                            )}
+                        </div>
+                    </header>
+
+                    <main className="max-w-7xl mx-auto px-4 py-6">
+                        {isGenerating ? (
+                            <div className="flex flex-col items-center justify-center py-20 opacity-50">
+                                <div className="text-blue-600 mb-4">
+                                    <Icon name="loader" className="w-10 h-10 animate-spin" />
+                                </div>
+                                <p className="text-gray-500 font-medium">Работаем...</p>
+                            </div>
+                        ) : products.length === 0 ? (
+                            <div className="text-center py-20 text-gray-400">
+                                <div className="mx-auto mb-4 w-16 h-16 flex items-center justify-center opacity-20">
+                                    <Icon name="package" className="w-full h-full" />
+                                </div>
+                                <p>Список пуст. Укажите количество и нажмите "Создать".</p>
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6">
+                                {products.map((product) => (
+                                    <ProductCard key={product.id} product={product} />
+                                ))}
+                            </div>
+                        )}
+                    </main>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
                 const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
                 const name = `${cat} ${adj} Pixel-${i}`;
                 const price = Math.floor(Math.random() * (50000 - 100 + 1)) + 100;
