@@ -3,10 +3,11 @@ description: "Тестовый магазин на Jekyll и CSV"
 baseurl: "/simple-shop"
 url: "https://serhii50.github.io"
 theme: minima
+
 plugins:
   - jekyll-seo-tag
 
-# Настройка генерации
+# Настройки генератора страниц
 page_gen:
   - data: 'products'
     template: 'product'
