@@ -1,70 +1,90 @@
 ---
 layout: default
-title: Каталог
+title: Каталог товаров
 ---
 
-<style>
-  /* Стили оставляем те же, они отличные */
-  .product-grid {
-    display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; margin-top: 10px;
-  }
-  .product-card {
-    border: 1px solid #e1e4e8; border-radius: 12px; width: 100%; max-width: 320px;
-    background: #ffffff; display: flex; flex-direction: column; padding: 15px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.04); transition: transform 0.2s;
-  }
-  .product-card:hover { transform: translateY(-5px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-  
-  .product-img {
-    width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 12px;
-  }
-  .price-tag {
-    font-size: 1.2em; font-weight: bold; color: #2ea44f; margin: 10px 0;
-  }
-  .btn-buy {
-    background-color: #2ea44f; color: white; border: none; padding: 12px;
-    border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; font-size: 16px; margin-top: auto;
-  }
-  
-  /* Темная тема */
-  @media (prefers-color-scheme: dark) {
-    .product-card { background-color: #161b22; border-color: #30363d; }
-    h3 { color: #c9d1d9; }
-    p { color: #8b949e; }
-  }
-</style>
+<div x-data="{ view: 'grid' }" class="min-h-screen bg-gray-50 pb-10">
 
-<div class="product-grid">
-  {% for item in site.data.products %}
-    <div class="product-card">
+  <div class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-20">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
       
-      {% assign product_image = item.images | split: ';' | first %}
-      
-      <a href="/simple-shop/product/{{ item.id }}.html" style="text-decoration: none; color: inherit;">
-        <img src="{{ product_image }}" alt="{{ item.name }}" class="product-img">
-        <h3>{{ item.name }}</h3>
-      </a>
-      
-      <p>{{ item.description | truncate: 50 }}</p>
-      
-      <div class="price-tag">{{ item.price }} грн.</div>
-      
-      <button class="btn-buy" onclick="addToCart('{{ item.name }}', '{{ item.price }}', '{{ product_image }}')">
-        В корзину
-      </button>
+      <h1 class="text-xl font-bold text-gray-800">
+        Магазин ({{ site.data.products.size }} товаров)
+      </h1>
+
+      <div class="flex bg-gray-100 p-1 rounded-lg">
+        <button 
+          @click="view = 'grid'" 
+          class="p-1.5 rounded-md transition-all"
+          :class="view === 'grid' ? 'bg-white shadow text-blue-600' : 'text-gray-400 hover:text-gray-600'"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+        </button>
+
+        <button 
+          @click="view = 'list'"
+          class="p-1.5 rounded-md transition-all"
+          :class="view === 'list' ? 'bg-white shadow text-blue-600' : 'text-gray-400 hover:text-gray-600'"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"></line><line x1="8" y1="12" x2="21" y2="12"></line><line x1="8" y1="18" x2="21" y2="18"></line><line x1="3" y1="6" x2="3.01" y2="6"></line><line x1="3" y1="12" x2="3.01" y2="12"></line><line x1="3" y1="18" x2="3.01" y2="18"></line></svg>
+        </button>
+      </div>
 
     </div>
-  {% endfor %}
-</div>
+  </div>
 
-<script>
-  // Скрипт остается без изменений
-  function addToCart(title, price, image) {
-    let cart = JSON.parse(localStorage.getItem('mySimpleCart')) || [];
-    cart.push({ title: title, price: price, image: image });
-    localStorage.setItem('mySimpleCart', JSON.stringify(cart));
+  <div class="max-w-7xl mx-auto px-4 py-6">
     
-    if (navigator.vibrate) navigator.vibrate(50);
-    updateBadge(); 
-  }
-</script>
+    <div :class="view === 'grid' ? 'grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6' : 'flex flex-col gap-3'">
+
+      {% for item in site.data.products limit:100 %}
+        {% assign images = item.images | split: ';' %}
+        {% assign main_image = images[0] %}
+
+        <a href="{{ '/product/' | relative_url }}{% if item.id < 10 %}0{% endif %}{{ item.id }}.html" class="block group">
+          
+          <div 
+            class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-shadow hover:shadow-md"
+            :class="view === 'grid' ? 'flex flex-col h-full' : 'flex items-center p-3 gap-4'"
+          >
+            
+            <div 
+              class="bg-gray-100 relative overflow-hidden flex-shrink-0"
+              :class="view === 'grid' ? 'aspect-square w-full' : 'w-20 h-20 rounded-lg'"
+            >
+              <img src="{{ main_image }}" alt="{{ item.name }}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
+            </div>
+
+            <div class="flex flex-col flex-grow" :class="view === 'grid' ? 'p-3' : ''">
+              
+              <span 
+                x-show="view === 'grid'" 
+                class="text-[10px] uppercase font-bold text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded w-fit mb-1"
+              >
+                New
+              </span>
+
+              <h3 class="font-bold text-gray-800 text-sm leading-snug line-clamp-2 mb-1">
+                {{ item.name }}
+              </h3>
+
+              <div class="mt-auto pt-2 flex items-center justify-between">
+                <span class="text-lg font-bold text-gray-900">
+                  {{ item.price }} ₽
+                </span>
+                
+                <div class="bg-gray-900 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" :class="view === 'list' ? '!opacity-100' : ''">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </a>
+      {% endfor %}
+
+    </div>
+  </div>
+
+</div>
