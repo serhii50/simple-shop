@@ -1,6 +1,5 @@
 title: "Мой Простой Магазин"
 description: "Тестовый магазин на Jekyll и CSV"
-baseurl: "/simple-shop"
 url: "https://serhii50.github.io"
 theme: minima
 
