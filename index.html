@@ -41,7 +41,7 @@ title: Каталог товаров
         {% assign images = item.images | split: ';' %}
         {% assign main_image = images[0] %}
 
-        <a href="{{ '/product/' | relative_url }}{% if item.id < 10 %}0{% endif %}{{ item.id }}.html" class="block group">
+        <a href="{{ '/product/' | relative_url }}{{ item.id }}.html" class="block group">
           
           <div 
             class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden transition-shadow hover:shadow-md"
