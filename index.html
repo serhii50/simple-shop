@@ -3,6 +3,13 @@ layout: default
 title: Каталог товаров
 ---
 
+<div style="background: #ffcccc; border: 2px solid red; padding: 10px; font-family: monospace; font-weight: bold; z-index: 9999; position: relative;">
+  🔍 ДИАГНОСТИКА: <br>
+  site.url: [{{ site.url }}] <br>
+  site.baseurl: [{{ site.baseurl }}] <br>
+  Тест фильтра: {{ "/product/1.html" | relative_url }}
+</div>
+
 <div x-data="{ view: 'grid' }" class="min-h-screen bg-gray-50 pb-10">
 
   <div class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-20">
