@@ -3,21 +3,6 @@ layout: default
 title: Каталог товаров
 ---
 
-<div style="background: #ffcccc; border: 2px solid red; padding: 10px; font-family: monospace; font-weight: bold; z-index: 9999; position: relative;">
-  🔍 ДИАГНОСТИКА: <br>
-  site.url: [{{ site.url }}] <br>
-  site.github.baseurl: [{{ site.github.baseurl }}] <br>
-  Тест фильтра: {{ relative_url }} <br> <br>
-
-  site.title: [{{ site.title }}] <br>
-site.description: [{{ site.description }}] <br>
-site.baseurl: [{{ site.baseurl }}] <br>
-site.url: [{{ site.url }}] <br>
-site.theme: [{{ site.theme }}] <br>
-site.plugins: [{{ site.plugins }}] <br>
-  
-</div>
-
 <div x-data="{ view: 'grid' }" class="min-h-screen bg-gray-50 pb-10">
 
   <div class="bg-white border-b border-gray-200 shadow-sm sticky top-0 z-20">
@@ -85,7 +70,7 @@ site.plugins: [{{ site.plugins }}] <br>
 
               <div class="mt-auto pt-2 flex items-center justify-between">
                 <span class="text-lg font-bold text-gray-900">
-                  {{ item.price }} ₽
+                  {{ item.price }} {{ site.currency }}
                 </span>
                 
                 <div class="bg-gray-900 text-white p-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" :class="view === 'list' ? '!opacity-100' : ''">
