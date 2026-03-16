@@ -8,7 +8,7 @@ layout: null
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Генератор товаров (Admin)</title>
     
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="assets/css/style.css">
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -110,7 +110,7 @@ layout: null
                         
                         <div className="flex items-end justify-between mt-auto pt-3">
                             <span className="text-lg font-bold text-gray-900">
-                                {product.price.toLocaleString('ru-RU')} {{ site.currency }}
+                                {product.price.toLocaleString('ru-RU')} {"{{ site.currency }}"}
                             </span>
                         </div>
                     </div>

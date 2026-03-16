@@ -1,0 +1,15 @@
+# Бинарники Tailwind
+tailwindcss.exe
+tailwindcss-windows-x64.exe
+
+# Node модули
+node_modules/
+
+# Файлы сборки Jekyll
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+
+# Зависимости Ruby
+Gemfile.lock
