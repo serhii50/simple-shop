@@ -48,6 +48,7 @@ title: Корзина
     if (cart.length === 0) {
       container.innerHTML = '<div class="text-center py-12"><div class="text-5xl mb-4 opacity-50">🛒</div><p class="text-gray-500">В корзине пусто</p><a href="{{ "/" | relative_url }}" class="inline-block mt-4 text-blue-600 hover:underline">Вернуться к покупкам</a></div>';
       summary.style.display = 'none';
+      if(window.updateBadge) window.updateBadge();
       return;
     }
 
