@@ -106,11 +106,13 @@ title: Корзина
     let tgUser = "{{ site.telegram_user }}";
     
     let url = messenger === 'wa' 
-      ? \`https://wa.me/\${phone}?text=\${encodeURIComponent(message)}\`
-      : \`https://t.me/\${tgUser}?text=\${encodeURIComponent(message)}\`;
+      ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
+      : `https://t.me/${tgUser}?text=${encodeURIComponent(message)}`;
       
     window.location.href = url;
   }
 
-  loadCart();
+  document.addEventListener('DOMContentLoaded', () => {
+    loadCart();
+  });
 </script>
