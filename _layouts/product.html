@@ -1,6 +1,15 @@
 ---
 layout: default
 ---
+{% assign images = page.images | split: ';' %}
+{% capture custom_head %}
+<meta property="og:title" content="{{ page.name | escape }}">
+<meta property="og:description" content="{{ page.description | escape }}">
+<meta property="og:image" content="{{ images[0] | absolute_url }}">
+<meta property="og:type" content="product">
+<meta property="product:price:amount" content="{{ page.price }}">
+<meta property="product:price:currency" content="{{ site.currency }}">
+{% endcapture %}
 
 <div class="max-w-5xl mx-auto px-4 py-8">
   <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">

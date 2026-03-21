@@ -123,6 +123,10 @@ title: Корзина
       ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}`
       : `https://t.me/${tgUser}?text=${encodeURIComponent(message)}`;
       
+    // Очищаем корзину, предполагая, что заказ будет отправлен
+    localStorage.removeItem('mySimpleCart');
+    loadCart();
+      
     window.location.href = url;
   }
 
