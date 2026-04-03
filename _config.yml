@@ -2,8 +2,8 @@ title: "Мой Простой Магазин"
 description: "Тестовый магазин на Jekyll и CSV"
 url: "https://serhii50.github.io"
 baseurl: "/simple-shop"
-theme: simple-shop-theme-mini
-# theme: simple-shop-theme-tailwind
+# theme: simple-shop-theme-mini
+theme: simple-shop-theme-tailwind
 plugins:
   - jekyll-seo-tag
 
