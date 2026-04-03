@@ -1,7 +1,16 @@
-source "https://rubygems.org"
+require 'yaml'
+config = YAML.load_file('_config.yml')
+active_theme = config['theme'] || 'simple-shop-theme-mini'
 
+source "https://rubygems.org"
 gem "jekyll"
-gem "simple-shop-theme-mini", github: "serhii50/simple-shop-theme-mini", branch: "main"
-# gem "simple-shop-theme-tailwind", github: "serhii50/simple-shop-theme-tailwind", branch: "main"
+
+# Динамически подключаем гем-тему с GitHub 
+if active_theme.start_with?("simple-shop-theme-")
+  gem active_theme, github: "serhii50/#{active_theme}", branch: "main"
+else
+  gem active_theme
+end
+
 gem "webrick"
 gem "kramdown-parser-gfm"
