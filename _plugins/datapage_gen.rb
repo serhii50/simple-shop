@@ -5,15 +5,14 @@ module Jekyll
       @base = base
       @dir = dir
       
-      # Формируем имя файла
       filename = name_expr ? data[name_expr].to_s : name
-      
-      # ВОТ ТУТ БЫЛА ОШИБКА. Добавил "Jekyll::" перед Utils
       @name = Jekyll::Utils.slugify(filename) + ".html"
-
       self.process(@name)
-      self.read_yaml(File.join(base, '_layouts'), template + '.html')
-
+      
+      # Создаем виртуальную страницу с указанным макетом (template)
+      self.content = ""
+      self.data = {}
+      self.data['layout'] = template
       self.data.merge!(data)
       self.data['title'] = data['name'] if data.key?('name')
     end
