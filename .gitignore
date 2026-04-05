@@ -12,7 +12,7 @@ _site/
 .jekyll-metadata
 
 # Зависимости Ruby
-Gemfile.lock
+# Gemfile.lock — НЕ игнорируем, нужен для воспроизводимых деплоев на GitHub Actions
 
 # Локальный конфиг bundle (пути к локальным темам, машинно-специфичный)
 .bundle/config
