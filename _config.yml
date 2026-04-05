@@ -12,9 +12,11 @@ whatsapp_phone: "380501234567"
 telegram_user: "Serhii_K"
 currency: "грн."
 
+permalink: pretty
+
 page_gen:
   - data: 'products'
     template: 'product'
     name: 'slug'
     dir: 'product'
-    permalink: '/product/:slug/'
+    extension: 'html'
