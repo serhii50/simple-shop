@@ -16,6 +16,6 @@ currency: "грн."
 page_gen:
   - data: 'products'
     template: 'product'
-    name: 'id'
+    name: 'slug'
     dir: 'product'
     extension: 'html'
