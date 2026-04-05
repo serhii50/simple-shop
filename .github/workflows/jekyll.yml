@@ -22,16 +22,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Sync theme in Gemfile.lock
-        run: |
-          gem install bundler --no-document -q
-          bundle lock --update
-
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: "3.1"
-          bundler-cache: true
+          bundler-cache: false
+
+      - name: Sync theme in Gemfile.lock
+        run: bundle lock --update
+
+      - name: Install dependencies
+        run: bundle install
 
       - name: Setup Pages
         id: pages
