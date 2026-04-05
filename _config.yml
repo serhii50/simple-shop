@@ -9,7 +9,7 @@ plugins:
 
 # Настройки магазина
 whatsapp_phone: "380501234567"
-telegram_user: "Serhii_K"
+telegram_user: "serhiikirichenko"
 currency: "грн."
 
 permalink: pretty
