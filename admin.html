@@ -53,7 +53,7 @@ layout: null
             for (let i = 1; i <= count; i++) {
                 const cat = CATEGORIES[Math.floor(Math.random() * CATEGORIES.length)];
                 const adj = ADJECTIVES[Math.floor(Math.random() * ADJECTIVES.length)];
-                const name = `${cat} ${adj} Pixel-${i}`;
+                const title = `${cat} ${adj} Pixel-${i}`;
                 const price = Math.floor(Math.random() * (50000 - 100 + 1)) + 100;
                 
                 const numImages = Math.floor(Math.random() * (5 - 2 + 1)) + 2;
@@ -64,11 +64,11 @@ layout: null
 
                 products.push({
                     id: i,
-                    name,
+                    title,
                     price,
                     images,
                     category: cat,
-                    description: `Описание товара ${name}. Это отличный выбор, если вы ищете ${cat.toLowerCase()}. В комплекте ${numImages} фото.`,
+                    description: `Описание товара ${title}. Это отличный выбор, если вы ищете ${cat.toLowerCase()}. В комплекте ${numImages} фото.`,
                     rating: (Math.random() * (5 - 3.5) + 3.5).toFixed(1),
                     tags: `${cat.toLowerCase()};${ADJ_TAG_MAP[adj] || adj.toLowerCase()}`,
                 });
@@ -84,7 +84,7 @@ layout: null
                     <div className="relative aspect-square bg-gray-100">
                         <img 
                             src={product.images[activeImageIndex]} 
-                            alt={product.name}
+                            alt={product.title}
                             className="w-full h-full object-cover"
                         />
                         {product.images.length > 1 && (
@@ -116,7 +116,7 @@ layout: null
                         </div>
                         
                         <h3 className="font-bold text-gray-800 text-sm mb-1 leading-snug line-clamp-2">
-                            {product.name}
+                            {product.title}
                         </h3>
 
                         {product.tags && (
@@ -155,7 +155,7 @@ layout: null
             };
 
             const generateCSVContent = () => {
-                const header = "id,name,price,images,description,tags\n";
+                const header = "id,title,price,images,description,tags\n";
                 const rows = products.map(p => {
                     const escape = (val) => {
                         const str = String(val);
@@ -166,7 +166,7 @@ layout: null
                     };
                     return [
                         p.id,
-                        escape(p.name),
+                        escape(p.title),
                         p.price,
                         escape(p.images.join(';')),
                         escape(p.description),

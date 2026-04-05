@@ -1,4 +1,4 @@
-id,name,price,images,description,tags
+id,title,price,images,description,tags
 1,Чехол Флагманский Pixel-1,21315,https://picsum.photos/seed/product-1-img-0/600/600;https://picsum.photos/seed/product-1-img-1/600/600;https://picsum.photos/seed/product-1-img-2/600/600;https://picsum.photos/seed/product-1-img-3/600/600;https://picsum.photos/seed/product-1-img-4/600/600,"Описание товара Чехол Флагманский Pixel-1. Это отличный выбор, если вы ищете чехол. В комплекте 5 фото.",чехол;флагман
 2,Смартфон Бюджетный Pixel-2,37158,https://picsum.photos/seed/product-2-img-0/600/600;https://picsum.photos/seed/product-2-img-1/600/600;https://picsum.photos/seed/product-2-img-2/600/600,"Описание товара Смартфон Бюджетный Pixel-2. Это отличный выбор, если вы ищете смартфон. В комплекте 3 фото.",смартфон;бюджет
 3,Ноутбук Быстрый Pixel-3,20408,https://picsum.photos/seed/product-3-img-0/600/600;https://picsum.photos/seed/product-3-img-1/600/600;https://picsum.photos/seed/product-3-img-2/600/600;https://picsum.photos/seed/product-3-img-3/600/600,"Описание товара Ноутбук Быстрый Pixel-3. Это отличный выбор, если вы ищете ноутбук. В комплекте 4 фото.",ноутбук;быстрый
