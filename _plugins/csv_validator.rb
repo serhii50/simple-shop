@@ -1,5 +1,5 @@
 # Валидатор CSV перед сборкой Jekyll
-# Проверяет структуру products.csv и выводит предупреждения/ошибки.
+# Проверяет структуру products.csv. При ошибках — жёстко прерывает сборку.
 
 Jekyll::Hooks.register :site, :after_reset do |site|
   csv_path = File.join(site.source, '_data', 'products.csv')
@@ -13,8 +13,7 @@ Jekyll::Hooks.register :site, :after_reset do |site|
   begin
     rows = CSV.read(csv_path, headers: true)
   rescue CSV::MalformedCSVError => e
-    Jekyll.logger.error "CSV Validator:", "Не удалось разобрать products.csv — #{e.message}"
-    next
+    abort("[CSV Validator] Не удалось разобрать products.csv — #{e.message}")
   end
 
   # Обязательные поля
@@ -39,10 +38,10 @@ Jekyll::Hooks.register :site, :after_reset do |site|
       end
     end
 
-    # Цена — число
+    # Цена — число (ошибка: NaN сломает JS-корзину)
     price = row['price'].to_s.strip
     unless price.match?(/\A\d+(\.\d+)?\z/)
-      warnings << "Строка #{line}: цена '#{price}' не является числом"
+      errors << "Строка #{line}: цена '#{price}' не является числом — сломает parseFloat() в корзине"
     end
 
     # Дублирующийся id
@@ -66,7 +65,7 @@ Jekyll::Hooks.register :site, :after_reset do |site|
     unless images.empty?
       images.split(';').each do |img|
         img.strip!
-        unless img.match?(/\Ahttps?:\/\/.+/)
+        unless img.match?(/\Ahttps?:\/\/\S+\z/)
           warnings << "Строка #{line}: подозрительный URL изображения '#{img}'"
         end
       end
@@ -82,13 +81,15 @@ Jekyll::Hooks.register :site, :after_reset do |site|
   total = rows.length
   Jekyll.logger.info "CSV Validator:", "Проверено #{total} товаров в products.csv"
 
-  warnings.each { |w| Jekyll.logger.warn "CSV Validator:", w }
-  errors.each   { |e| Jekyll.logger.error "CSV Validator:", e }
+  warnings.each { |w| Jekyll.logger.warn  "CSV Validator:", w }
 
   if errors.empty?
     Jekyll.logger.info "CSV Validator:", "✓ Ошибок не найдено#{warnings.empty? ? '' : " (предупреждений: #{warnings.size})"}"
   else
-    Jekyll.logger.error "CSV Validator:", "✗ Найдено ошибок: #{errors.size}. Исправьте перед публикацией."
-    # Не прерываем сборку — только информируем
+    errors.each { |e| Jekyll.logger.error "CSV Validator Error:", e }
+    Jekyll.logger.error "CSV Validator:", "✗ Найдено ошибок: #{errors.size}. Исправьте файл products.csv!"
+
+    # Жёстко прерываем сборку — мусорные данные не должны попасть в деплой
+    abort("Сборка остановлена из-за нарушения контракта данных в каталоге.")
   end
 end
