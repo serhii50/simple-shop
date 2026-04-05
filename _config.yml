@@ -12,10 +12,9 @@ whatsapp_phone: "380501234567"
 telegram_user: "Serhii_K"
 currency: "грн."
 
-# Настройки генератора страниц
 page_gen:
   - data: 'products'
     template: 'product'
     name: 'slug'
     dir: 'product'
-    extension: 'html'
+    permalink: '/product/:slug/'
